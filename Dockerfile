@@ -18,7 +18,9 @@ RUN ./autogen.sh && \
   make && \
   make install
 
-EXPOSE 1111 8890 80
+ENV RAWBASE_HOME=/var/docker/rawbase-server
+ENV VIRTUOSO=/usr/local/virtuoso-opensource/bin/virtuoso-t
+ENV VIRTUOSO_CFG=/usr/local/virtuoso-opensource/var/lib/virtuoso/db/virtuoso.ini
 
 WORKDIR /var/docker
 ADD run.sh run.sh
@@ -26,13 +28,14 @@ RUN chmod +x run.sh
 
 RUN cd /usr/bin && ln -s /usr/local/virtuoso-opensource/bin/isql-v isql-vt
 
-RUN git clone https://github.com/rawbase/rawbase-server.git /var/docker/rawbase-server
-ADD install.sh /var/docker/rawbase-server/install/install.sh
-RUN /usr/local/virtuoso-opensource/bin/virtuoso-t -c /usr/local/virtuoso-opensource/var/lib/virtuoso/db/virtuoso.ini && \
+RUN git clone https://github.com/rawbase/rawbase-server.git $RAWBASE_HOME
+ADD install.sh $RAWBASE_HOME/install/install.sh
+RUN $VIRTUOSO -c $VIRTUOSO_CFG && \
   sleep 15s && \
-  cd /var/docker/rawbase-server && \
-  RAWBASE_HOME=/var/docker/rawbase-server install/install.sh
+  cd $RAWBASE_HOME && \
+  install/install.sh
+ADD config.js $RAWBASE_HOME/pages/rawbase/js/app/config.js
 
-CMD /usr/local/virtuoso-opensource/bin/virtuoso-t -c /usr/local/virtuoso-opensource/var/lib/virtuoso/db/virtuoso.ini && \
-  sleep 3s && \
-  rawbase-server/rawbase-server.sh 80
+EXPOSE 1111 8890 80
+
+CMD run.sh
