@@ -1,3 +1,7 @@
 var config = {
-    host: '/rawbase/'
+    host: '/rawbase/',
+    google: {
+        clientid    :   '989147634264.apps.googleusercontent.com',
+        redirect    :   '/rawbase/'
+    }
 }
