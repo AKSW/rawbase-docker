@@ -39,4 +39,4 @@ RUN chmod +x run.sh
 
 EXPOSE 80 8890 1111
 
-CMD run.sh
+CMD /var/docker/run.sh
